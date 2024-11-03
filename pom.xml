@@ -156,7 +156,21 @@
             <artifactId>pytorch</artifactId>
             <version>0.19.0</version> <!-- Optional: For PyTorch-backed models -->
         </dependency>
-
+    <dependency>
+        <groupId>ai.djl.huggingface</groupId>
+        <artifactId>huggingface-tokenizer</artifactId>
+        <version>0.20.0</version>
+    </dependency>
+    <dependency>
+        <groupId>ai.djl.huggingface</groupId>
+        <artifactId>huggingface-model-zoo</artifactId>
+        <version>0.20.0</version>
+    </dependency>
+    <dependency>
+        <groupId>ai.djl</groupId>
+        <artifactId>api</artifactId>
+        <version>0.22.1</version>
+    </dependency>
     </dependencies>
 
     <profiles>
