@@ -27,12 +27,24 @@
             <email></email>
         </developer>
     </developers>
+    <repositories>
+        <repository>
+            <id>djl-repository</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </repository>
+    </repositories>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>io.github.ZJU-ACES-ISE</groupId>
+            <artifactId>chatunitest-starter</artifactId>
+            <version>1.4.0</version>
+            <type>pom</type>
+        </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
@@ -134,6 +146,17 @@
             <artifactId>chatunitest-core</artifactId>
             <version>1.1.0</version>
         </dependency>
+        <dependency>
+            <groupId>ai.djl.huggingface</groupId>
+            <artifactId>tokenizers</artifactId>
+            <version>0.19.0</version> <!-- Check for the latest version -->
+        </dependency>
+        <dependency>
+            <groupId>ai.djl.huggingface</groupId>
+            <artifactId>pytorch</artifactId>
+            <version>0.19.0</version> <!-- Optional: For PyTorch-backed models -->
+        </dependency>
+
     </dependencies>
 
     <profiles>

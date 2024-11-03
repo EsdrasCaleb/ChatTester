@@ -16,9 +16,10 @@ public class TesterRunner implements Runner {
     }
 
     public void runClass(String fullClassName) {
+        config.getLog().info("\nRUNCLASS \n");
         try {
             //TODO: use TesterMethodRunner in ClassRunner.
-            new ClassRunner(config, fullClassName).start();
+            new ClassRunner(config, fullClassName).start(); 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -26,6 +27,7 @@ public class TesterRunner implements Runner {
 
     @Override
     public void runMethod(String fullClassName, MethodInfo methodInfo) {
+        config.getLog().info("\nRUNMETHOD \n");
         try {
             new TesterMethodRunner(config, fullClassName, methodInfo).start();
         } catch (IOException e) {
