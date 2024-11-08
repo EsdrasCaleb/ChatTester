@@ -10,6 +10,8 @@ import zju.cst.aces.runner.AbstractRunner;
 import zju.cst.aces.runner.MethodRunner;
 import zju.cst.aces.util.CodeExtractor;
 
+import hugging.ModelChatGenerator;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -38,10 +40,10 @@ public class TesterMethodRunner extends MethodRunner {
                 + classInfo.methodSigs.get(methodInfo.methodSignature) + separator + num + separator + "Test";
         String fullTestName = fullClassName + separator + methodInfo.methodName + separator
                 + classInfo.methodSigs.get(methodInfo.methodSignature) + separator + num + separator + "Test";
-        config.getLog().info("\n==========================\n[ChatUniTest] Generating test for method 1< "
+        config.getLog().info("\n==========================\n[ChatUniTest] Generating test for method < "
                 + methodInfo.methodName + " > number " + num + "...\n");
-
-        ChatGenerator generator = new ChatGenerator(config);
+        throw new RuntimeException("OK entrou aqui");
+        //ModelChatGenerator generator = new ModelChatGenerator(config); // this do anything?
         PromptConstructorImpl pc = new PromptConstructorImpl(config);
         RepairImpl repair = new RepairImpl(config, pc);
 
@@ -72,6 +74,7 @@ public class TesterMethodRunner extends MethodRunner {
                 // generate method intention
                 config.getLog().info("Creating intention for method < " + methodInfo.methodName + " > ...");
                 List<Message> intentionPrompt = this.promptGenerator.generateMessages(promptInfo, pt.TEMPLATE_EXTRA);
+                config.getLog().info("Using model");
                 ChatResponse response = ModelChatGenerator.chat(config, intentionPrompt);
                 String intention = ModelChatGenerator.getContentByResponse(response);
 

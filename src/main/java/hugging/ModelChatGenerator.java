@@ -24,6 +24,7 @@ public class ModelChatGenerator extends ChatGenerator {
     }
 
     public static ChatResponse chat(Config config, List<ChatMessage> chatMessages) {
+        config.getLog().info("Calling model 2");
         ChatResponse response = new AskModel(config).askModel2(chatMessages);
         if (response == null) {
             throw new RuntimeException("Response is null, failed to get response.");
