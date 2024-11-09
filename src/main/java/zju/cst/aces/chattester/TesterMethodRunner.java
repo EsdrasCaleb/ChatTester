@@ -10,7 +10,7 @@ import zju.cst.aces.runner.AbstractRunner;
 import zju.cst.aces.runner.MethodRunner;
 import zju.cst.aces.util.CodeExtractor;
 
-import hugging.ModelChatGenerator;
+import custommodels.ModelChatGenerator;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class TesterMethodRunner extends MethodRunner {
                 + classInfo.methodSigs.get(methodInfo.methodSignature) + separator + num + separator + "Test";
         config.getLog().info("\n==========================\n[ChatUniTest] Generating test for method < "
                 + methodInfo.methodName + " > number " + num + "...\n");
-        throw new RuntimeException("OK entrou aqui");
+        
         //ModelChatGenerator generator = new ModelChatGenerator(config); // this do anything?
         PromptConstructorImpl pc = new PromptConstructorImpl(config);
         RepairImpl repair = new RepairImpl(config, pc);

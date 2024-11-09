@@ -4,7 +4,7 @@ services:
     container_name: maven-runner   # Name for the container
     working_dir: /app              # Working directory inside the container
     volumes:
-      - /home/caleb/Documentos/doutorado/testes/projeto/ChatTester/:/app                     # Mount current directory to /app inside the container
+      - .:/app                     # Mount current directory to /app inside the container
       - ~/.m2:/root/.m2            # Cache Maven dependencies for faster builds
     command: ["tail", "-f", "/dev/null"]  # Keep the container running
     stdin_open: true               # Keep the container open for interaction
