@@ -76,6 +76,7 @@ public class TesterMethodRunner extends MethodRunner {
                 List<Message> intentionPrompt = this.promptGenerator.generateMessages(promptInfo, pt.TEMPLATE_EXTRA);
                 config.getLog().info("Using model");
                 ChatResponse response = ModelChatGenerator.chat(config, intentionPrompt);
+                config.getLog().info(response.toString());
                 String intention = ModelChatGenerator.getContentByResponse(response);
 
                 // set intention in user prompt

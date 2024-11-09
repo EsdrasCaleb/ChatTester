@@ -1,4 +1,8 @@
 target/
+models/
+venv/
+chatunitest-core
+djl
 chatunitest-tests/
 src/backup/
 !.mvn/wrapper/maven-wrapper.jar

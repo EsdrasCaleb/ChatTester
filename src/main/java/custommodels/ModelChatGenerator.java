@@ -19,7 +19,7 @@ public class ModelChatGenerator extends ChatGenerator {
    
     public static ChatResponse chat(Config config, List<Message> chatMessages) {
         config.getLog().info("Calling model hugg");
-        ChatResponse response = new AskHuggingFace(config,"bert-base-uncased","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").askChatGPT(chatMessages);
+        ChatResponse response = new AskHuggingFace(config,"gpt2").askChatGPT(chatMessages);
         if (response == null) {
             throw new RuntimeException("Response is null, failed to get response.");
         }
