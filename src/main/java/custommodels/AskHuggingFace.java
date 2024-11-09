@@ -36,7 +36,7 @@ public class AskHuggingFace extends AskGPT {
         super(config);
 
         try {
-            String authToken = "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";  // Add your token here
+            String authToken = "";  // Add your token here
 
             // Set Hugging Face token for authorization
             System.setProperty("huggingface.token", authToken);
