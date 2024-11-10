@@ -79,17 +79,12 @@ def download_model_for_djl(
 # Example usage
 if __name__ == "__main__":
     # Your Hugging Face token
-    HF_TOKEN = "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"  # Replace with your actual token
+    HF_TOKEN = ""  # Replace with your actual token
     
-    model_name = "meta-llama/Llama-3.2-3B-Instruct"  # Example model on Hugging Face
-    model = AutoModelForCausalLM.from_pretrained(model_name, token=HF_TOKEN)
-    tokenizer = AutoTokenizer.from_pretrained(model_name, token=HF_TOKEN)
-
-    model.save_pretrained("models/llama-3.2-3b-Instruct")
-    tokenizer.save_pretrained("models/llama-2-7b-Instruct")
 
 
 
+    mdesl_onix = 
 
     # Example for downloading BERT model with authentication
     download_model_for_djl(

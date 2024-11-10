@@ -8,6 +8,7 @@ src/backup/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+.env
 
 ### IntelliJ IDEA ###
 .idea/
