@@ -38,10 +38,6 @@ public class AskHuggingFace extends AskGPT {
             try {
                 Map<String, Object> payload = new HashMap<>();
 
-//                if (Objects.equals(config.getModel(), "code-llama") || Objects.equals(config.getModel(), "code-llama-13B")) {
-//                    payload.put("max_tokens", 8092);
-//                }
-
                 ModelConfig modelConfig = config.getModel().getDefaultConfig();
 
                 payload.put("messages", chatMessages);
@@ -52,6 +48,7 @@ public class AskHuggingFace extends AskGPT {
                 payload.put("presence_penalty", config.getPresencePenalty());
                  */
                 payload.put("max_tokens", config.getMaxResponseTokens());
+                config.getLog().info("Tokens:"+config.getMaxResponseTokens());
                 payload.put("stream", false);
                 String jsonPayload = GSON.toJson(payload);
                 

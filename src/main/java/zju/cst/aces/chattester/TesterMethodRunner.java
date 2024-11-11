@@ -304,8 +304,8 @@ public class TesterMethodRunner extends MethodRunner {
         record.setResponse(content);
         
         if (code.isEmpty()) {
-            config.getLog().info("[Response]:\n" + content);
-            config.getLog().info("Test for method < " + methodInfo.methodName + " > extract code failed");
+            config.getLog().error("[Response]:\n" + content);
+            config.getLog().error("Test for method < " + methodInfo.methodName + " > extract code failed");
             record.setHasCode(false);
             return "";
         }

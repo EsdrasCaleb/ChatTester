@@ -80,6 +80,7 @@ public class AskGoogle extends AskGPT {
                     throw new RuntimeException("In AskGPT.askChatGPT: " + ie);
                 }
                 if (response.body() == null) throw new IOException("Response body is null.");
+                config.getLog().info(response.body().string());
                 String responseString = ResponseAdapter.AdaptGoogle(response.body().string());
                 config.getLog().info(responseString);
                 ChatResponse chatResponse = GSON.fromJson(responseString, ChatResponse.class);
