@@ -292,19 +292,19 @@ public class TesterMethodRunner extends MethodRunner {
             config.getLog().error("Exceed max prompt tokens: " + methodInfo.methodName + " Skipped.");
             return "";
         }
-        config.getLog().info("[Prompt]:\n" + prompt.toString());
+        config.getLog().debug("[Prompt]:\n" + prompt.toString());
 
         ChatResponse response = ModelChatGenerator.chat(config, prompt);
         String content = ModelChatGenerator.getContentByResponse(response);
-        config.getLog().info("[Response]:\n" + content);
+        config.getLog().debug("[Response]:\n" + content);
         String code = ModelChatGenerator.extractCodeByContent(content);
-        config.getLog().info("Codig extraido:\n" + content);
         record.setPromptToken(response.getUsage().getPromptTokens());
         record.setResponseToken(response.getUsage().getCompletionTokens());
         record.setPrompt(prompt);
         record.setResponse(content);
         
         if (code.isEmpty()) {
+            config.getLog().info("[Response]:\n" + content);
             config.getLog().info("Test for method < " + methodInfo.methodName + " > extract code failed");
             record.setHasCode(false);
             return "";
