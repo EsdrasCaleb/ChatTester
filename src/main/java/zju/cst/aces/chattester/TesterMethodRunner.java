@@ -3,7 +3,6 @@ package zju.cst.aces.chattester;
 import zju.cst.aces.api.config.Config;
 import zju.cst.aces.api.impl.ChatGenerator;
 import zju.cst.aces.api.impl.PromptConstructorImpl;
-import zju.cst.aces.api.impl.RepairImpl;
 import zju.cst.aces.dto.*;
 import zju.cst.aces.prompt.PromptTemplate;
 import zju.cst.aces.runner.AbstractRunner;
@@ -11,13 +10,20 @@ import zju.cst.aces.runner.MethodRunner;
 import zju.cst.aces.util.CodeExtractor;
 
 import custommodels.ModelChatGenerator;
+import custommodels.CustomRepairImpl;
 
+import java.io.OutputStreamWriter;
+import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 public class TesterMethodRunner extends MethodRunner {
 
@@ -45,7 +51,7 @@ public class TesterMethodRunner extends MethodRunner {
         
         //ModelChatGenerator generator = new ModelChatGenerator(config); // this do anything?
         PromptConstructorImpl pc = new PromptConstructorImpl(config);
-        RepairImpl repair = new RepairImpl(config, pc);
+        CustomRepairImpl repair = new CustomRepairImpl(config, pc);
 
         if (!methodInfo.dependentMethods.isEmpty()) {
             pc.setPromptInfoWithDep(classInfo, methodInfo);
@@ -76,9 +82,9 @@ public class TesterMethodRunner extends MethodRunner {
                 List<Message> intentionPrompt = this.promptGenerator.generateMessages(promptInfo, pt.TEMPLATE_EXTRA);
                 config.getLog().info("Using model");
                 ChatResponse response = ModelChatGenerator.chat(config, intentionPrompt);
-                config.getLog().info(response.toString());
+                config.getLog().info("Gotten response"+response.toString());
                 String intention = ModelChatGenerator.getContentByResponse(response);
-
+                config.getLog().info("Pass intention");
                 // set intention in user prompt
                 prompt = promptGenerator.generateMessages(promptInfo);
                 Message userMessage = prompt.get(1);
@@ -165,23 +171,26 @@ public class TesterMethodRunner extends MethodRunner {
             } else {
                 prompt = promptGenerator.generateMessages(promptInfo);
             }
-
+            config.getLog().info("Tring to generate tests with my function ");
             // start generate test
             String code = generateTest(prompt, record);
             if (!record.isHasCode()) {
                 continue;
             }
-
+            config.getLog().info("Passou o tem codigo");
             if (CodeExtractor.isTestMethod(code)) {
                 TestSkeleton skeleton = new TestSkeleton(promptInfo); // test skeleton to wrap a test method
                 code = skeleton.build(code);
             } else {
                 code = repair.ruleBasedRepair(code);
             }
+            config.getLog().info("Entrou em unity test");
             promptInfo.setUnitTest(code);
 
             record.setCode(code);
+            config.getLog().info("Reparacao");
             repair.LLMBasedRepair(code, record.getRound());
+            config.getLog().info("Reparou o codigo");
             if (repair.isSuccess()) {
                 record.setHasError(false);
                 exportRecord(promptInfo, classInfo, record.getAttempt());
@@ -275,5 +284,58 @@ public class TesterMethodRunner extends MethodRunner {
         }
 
         return errors;
+    }
+
+    @Override
+    public String generateTest(List<Message> prompt, RoundRecord record) throws IOException {
+        if (isExceedMaxTokens(config.getMaxPromptTokens(), prompt)) {
+            config.getLog().error("Exceed max prompt tokens: " + methodInfo.methodName + " Skipped.");
+            return "";
+        }
+        config.getLog().info("[Prompt]:\n" + prompt.toString());
+
+        ChatResponse response = ModelChatGenerator.chat(config, prompt);
+        String content = ModelChatGenerator.getContentByResponse(response);
+        config.getLog().info("[Response]:\n" + content);
+        String code = ModelChatGenerator.extractCodeByContent(content);
+        config.getLog().info("Codig extraido:\n" + content);
+        record.setPromptToken(response.getUsage().getPromptTokens());
+        record.setResponseToken(response.getUsage().getCompletionTokens());
+        record.setPrompt(prompt);
+        record.setResponse(content);
+        
+        if (code.isEmpty()) {
+            config.getLog().info("Test for method < " + methodInfo.methodName + " > extract code failed");
+            record.setHasCode(false);
+            return "";
+        }
+        record.setHasCode(true);
+        config.getLog().info("Code retrived returning");
+        return code;
+    }
+
+    public void exportRecord(PromptInfo promptInfo, ClassInfo classInfo, int attempt) {
+        String methodIndex = classInfo.methodSigs.get(promptInfo.methodSignature);
+        Path recordPath = config.getHistoryPath();
+        config.getLog().info("Test for method save path: " + recordPath.toString());
+
+
+        recordPath = recordPath.resolve("class" + classInfo.index);
+        exportMethodMapping(classInfo, recordPath);
+
+        recordPath = recordPath.resolve("method" + methodIndex);
+        exportAttemptMapping(promptInfo, recordPath);
+
+        recordPath = recordPath.resolve("attempt" + attempt);
+        if (!recordPath.toFile().exists()) {
+            recordPath.toFile().mkdirs();
+        }
+        File recordFile = recordPath.resolve("records.json").toFile();
+        try (OutputStreamWriter writer = new OutputStreamWriter(
+                new FileOutputStream(recordFile), StandardCharsets.UTF_8)) {
+            writer.write(GSON.toJson(promptInfo.getRecords()));
+        } catch (IOException e) {
+            throw new RuntimeException("In AbstractRunner.exportRecord: " + e);
+        }
     }
 }

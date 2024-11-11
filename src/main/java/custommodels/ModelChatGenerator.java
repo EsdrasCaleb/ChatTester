@@ -20,9 +20,17 @@ public class ModelChatGenerator extends ChatGenerator {
    
     public static ChatResponse chat(Config config, List<Message> chatMessages) {
         Dotenv dotenv = Dotenv.load();
-        String model = dotenv.get("MODEL");
-        config.getLog().info("Calling model "+model);
-        ChatResponse response = new AskHuggingFace(config,model).askChatGPT(chatMessages);
+        String choice = dotenv.get("GENERATE");
+        ChatResponse response;
+        if (choice.equals("hugging")) {
+            String model = dotenv.get("MODEL");
+            config.getLog().info("Calling model "+model);
+            response = new AskHuggingFace(config,model).askChatGPT(chatMessages);
+        }
+        else{
+            config.getLog().info("Calling google");
+            response = new AskGoogle(config).askChatGPT(chatMessages);
+        }
         if (response == null) {
             throw new RuntimeException("Response is null, failed to get response.");
         }
