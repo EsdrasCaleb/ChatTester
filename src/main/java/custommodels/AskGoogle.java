@@ -60,13 +60,15 @@ public class AskGoogle extends AskGPT {
                 payload.put("contents", parts);
                 /*
                 payload.put("temperature", config.getTemperature());
+                
                 payload.put("frequency_penalty", config.getFrequencyPenalty());
                 payload.put("presence_penalty", config.getPresencePenalty());
-                 */
-                //payload.put("max_tokens", config.getMaxResponseTokens());
+                */
+                payload.put("maxTokens", config.getMaxResponseTokens());
+                
                 //payload.put("stream", false);
                 String jsonPayload = GSON.toJson(payload);
-                config.getLog().info(jsonPayload);
+                //config.getLog().info(jsonPayload);
                 RequestBody body = RequestBody.create(MediaType.parse("application/json"), jsonPayload);
                 
                 Request request = new Request.Builder().url("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key="+apiKey).post(body).addHeader("Content-Type", "application/json").build();
@@ -80,9 +82,9 @@ public class AskGoogle extends AskGPT {
                     throw new RuntimeException("In AskGPT.askChatGPT: " + ie);
                 }
                 if (response.body() == null) throw new IOException("Response body is null.");
-                config.getLog().info(response.body().string());
+                //config.getLog().info(response.body().string());
                 String responseString = ResponseAdapter.AdaptGoogle(response.body().string());
-                config.getLog().info(responseString);
+                config.getLog().error(responseString);
                 ChatResponse chatResponse = GSON.fromJson(responseString, ChatResponse.class);
                 config.getLog().info(chatResponse.toString());
                 response.close();

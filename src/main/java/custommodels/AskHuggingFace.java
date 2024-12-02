@@ -42,12 +42,13 @@ public class AskHuggingFace extends AskGPT {
 
                 payload.put("messages", chatMessages);
                 payload.put("model", model);
-                /*
+                /* 
                 payload.put("temperature", config.getTemperature());
                 payload.put("frequency_penalty", config.getFrequencyPenalty());
                 payload.put("presence_penalty", config.getPresencePenalty());
-                 */
+                */
                 payload.put("max_tokens", config.getMaxResponseTokens());
+                
                 config.getLog().info("Tokens:"+config.getMaxResponseTokens());
                 payload.put("stream", false);
                 String jsonPayload = GSON.toJson(payload);

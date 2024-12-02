@@ -190,12 +190,15 @@ public class TesterMethodRunner extends MethodRunner {
             record.setCode(code);
             config.getLog().info("Reparacao");
             repair.LLMBasedRepair(code, record.getRound());
-            config.getLog().info("Reparou o codigo");
+            
             if (repair.isSuccess()) {
+                config.getLog().info("Reparou o codigo");
                 record.setHasError(false);
                 exportRecord(promptInfo, classInfo, record.getAttempt());
+                config.getLog().info("Retornando");
                 return true;
             }
+            config.getLog().info("Reparo falhou");
             record.setHasError(true);
             record.setErrorMsg(promptInfo.getErrorMsg());
         }
@@ -296,8 +299,8 @@ public class TesterMethodRunner extends MethodRunner {
 
         ChatResponse response = ModelChatGenerator.chat(config, prompt);
         String content = ModelChatGenerator.getContentByResponse(response);
-        config.getLog().debug("[Response]:\n" + content);
         String code = ModelChatGenerator.extractCodeByContent(content);
+        config.getLog().info("[CODE]:\n" + code);
         record.setPromptToken(response.getUsage().getPromptTokens());
         record.setResponseToken(response.getUsage().getCompletionTokens());
         record.setPrompt(prompt);
@@ -305,7 +308,7 @@ public class TesterMethodRunner extends MethodRunner {
         
         if (code.isEmpty()) {
             config.getLog().error("[Response]:\n" + content);
-            config.getLog().error("Test for method < " + methodInfo.methodName + " > extract code failed");
+            config.getLog().error("Test for method < " + methodInfo.methodName + " > extract code failed in generation");
             record.setHasCode(false);
             return "";
         }
@@ -313,7 +316,7 @@ public class TesterMethodRunner extends MethodRunner {
         config.getLog().info("Code retrived returning");
         return code;
     }
-
+    /* 
     public void exportRecord(PromptInfo promptInfo, ClassInfo classInfo, int attempt) {
         String methodIndex = classInfo.methodSigs.get(promptInfo.methodSignature);
         Path recordPath = config.getHistoryPath();
@@ -338,4 +341,5 @@ public class TesterMethodRunner extends MethodRunner {
             throw new RuntimeException("In AbstractRunner.exportRecord: " + e);
         }
     }
+        */
 }
